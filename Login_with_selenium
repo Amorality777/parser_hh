@@ -1,0 +1,33 @@
+import time
+
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+
+try:
+    from setting_def import email, password
+except ImportError:
+    raise ImportError('Создайте файл setting_def.py с логином и паролем')
+
+
+def login(driver, _email, _password):
+    driver.get("https://spb.hh.ru/account/login?backurl=%2F")
+
+    driver.find_element_by_class_name("supernova-region-clarification-text").click()
+    driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div/div/form/div[1]/input').send_keys(_email)
+    time.sleep(2)
+    driver.find_element_by_xpath("//*[@id='HH-React-Root']/div/div/div/div/div/form/div[2]/span/input").send_keys(
+        _password)
+    time.sleep(2)
+    button = driver.find_element_by_xpath('//*[@id="HH-React-Root"]/div/div/div/div/div/form/div[4]/button')
+    button.click()
+    time.sleep(60)
+    if button.is_enabled():
+        button.click()
+
+
+d = webdriver.Chrome(ChromeDriverManager().install())
+login(d, email, password)
+d.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/div/div/form/div/div[1]/div/input').send_keys(
+    'Системный администратор')
+time.sleep(2)
+d.find_element_by_xpath('/html/body/div[4]/div[2]/div/div/div/div/form/div/div[2]/button').click()
